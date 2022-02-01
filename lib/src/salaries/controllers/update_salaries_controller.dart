@@ -7,6 +7,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:salary_app/src/brigades/models/brigade.dart';
+import 'package:salary_app/src/history/controllers/TeamHistoryController.dart';
+import 'package:salary_app/src/salaries/controllers/salary_calculator_controller.dart';
 import 'package:salary_app/src/salaries/models/plank.dart';
 import 'package:salary_app/src/salaries/models/team_member.dart';
 import 'package:salary_app/src/salaries/models/worker.dart';
@@ -15,8 +17,12 @@ import 'package:salary_app/src/settings/models/settings_model.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:collection/collection.dart';
 
-class SalaryCalculatorController extends GetxController {
-  static SalaryCalculatorController get to => Get.find();
+class UpdateSalariesController extends GetxController {
+  UpdateSalariesController(this.team);
+
+  static UpdateSalariesController get to => Get.find();
+
+  final Team team;
 
   final _employees = <Employee>[
     Employee(id: 1, name: "Agnis Birznieks"),
@@ -173,6 +179,8 @@ class SalaryCalculatorController extends GetxController {
     // });
     _settings.value = await FirestoreService().getSettings();
     _brigades.value = await FirestoreService().getBrigades();
+    teamMembers.value = team.members;
+    tara.value = team.planks;
     _selectedBrigade.value = _brigades[0];
     super.onInit();
   }
@@ -622,14 +630,16 @@ class SalaryCalculatorController extends GetxController {
     //   ..click();
   }
 
-  Future<void> uploadTeam() async {
-    final team = Team(
-      id: DateTime.now().millisecondsSinceEpoch,
+  Future<void> updateTeam() async {
+    final t = Team(
+      id: team.id,
       createDate: _selectedDateTime.value,
       members: teamMembers.toList(),
       planks: tara.toList(),
       brigade: _selectedBrigade.value!,
     );
-    await FirestoreService().addTeam(team);
+    await FirestoreService().updateTeam(team);
+    TeamHistoryController.to.teams = await FirestoreService().findTeams();
+    Get.back();
   }
 }

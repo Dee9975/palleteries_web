@@ -7,10 +7,13 @@ import 'package:salary_app/src/brigades/models/brigade.dart';
 import 'package:salary_app/src/history/controllers/TeamHistoryController.dart';
 import 'package:salary_app/src/history/controllers/plank_history_controller.dart';
 import 'package:salary_app/src/salaries/controllers/salary_calculator_controller.dart';
+import 'package:salary_app/src/salaries/controllers/update_salaries_controller.dart';
 import 'package:salary_app/src/salaries/models/plank.dart';
 import 'package:salary_app/src/salaries/models/team_member.dart';
 import 'package:salary_app/src/salaries/models/worker.dart';
 import 'package:salary_app/src/salaries/screens/salary_calculator.dart';
+import 'package:salary_app/src/salaries/screens/update_salaries.dart';
+import 'package:salary_app/src/services/firestore_service.dart';
 import 'package:supercharged/supercharged.dart';
 
 class TeamHistory extends StatelessWidget {
@@ -157,6 +160,22 @@ class TeamHistory extends StatelessWidget {
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
+                                        ),
+                                        SizedBox(
+                                          width: 16.0,
+                                        ),
+                                        IconButton(
+                                          onPressed: () => Get.to(
+                                            () => UpdateSalaries(team: el),
+                                          ),
+                                          icon: Icon(Icons.edit),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        IconButton(
+                                          onPressed: () => TeamHistoryController
+                                              .to
+                                              .removeTeam(el),
+                                          icon: Icon(Icons.delete),
                                         ),
                                       ],
                                     ),

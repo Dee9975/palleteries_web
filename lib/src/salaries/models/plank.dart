@@ -12,6 +12,7 @@ class Plank {
   final TaraType type;
   bool zkv;
   bool kalts;
+  bool d9;
 
   double get volume => height * width * length * amount;
 
@@ -24,6 +25,7 @@ class Plank {
     required this.type,
     this.kalts = false,
     this.zkv = false,
+    this.d9 = false,
   });
 
   factory Plank.fromJson(Map<String, dynamic> json) => _$PlankFromJson(json);

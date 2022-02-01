@@ -13,6 +13,7 @@ class TeamHistoryController extends GetxController {
 
   final _teams = <Team>[].obs;
   List<Team> get teams => _teams.value;
+  set teams(List<Team> val) => _teams.value = val;
 
   final _loading = false.obs;
   bool get loading => _loading.value;
@@ -88,6 +89,12 @@ class TeamHistoryController extends GetxController {
     _brigades.value = await FirestoreService().getBrigades();
     _loading.value = false;
     super.onInit();
+  }
+
+  Future<void> removeTeam(Team team) async {
+    await FirestoreService().removeTeam(team);
+
+    _teams.removeWhere((element) => element.id == team.id);
   }
 
   Future<void> exportPlanksToPdf() async {

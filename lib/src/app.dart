@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:salary_app/src/brigades/screens/brigades_list.dart';
+import 'package:salary_app/src/employees/screens/employee_editor.dart';
 import 'package:salary_app/src/history/screens/team_history.dart';
 import 'package:salary_app/src/monthly_salaries/screens/monthly_salary_filter.dart';
 import 'package:salary_app/src/salaries/screens/salary_calculator.dart';
@@ -39,6 +40,10 @@ class App extends StatelessWidget {
         GetPage(
           name: "/monthly_salaries_filter",
           page: () => MonthlySalaryFilter(),
+        ),
+        GetPage(
+          name: "/employee_editor",
+          page: () => EmployeeEditor(),
         ),
       ],
     );

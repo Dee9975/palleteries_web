@@ -3,12 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
-import 'package:salary_app/src/salaries/controllers/salary_calculator_controller.dart';
+import 'package:salary_app/src/salaries/controllers/update_salaries_controller.dart';
 import 'package:salary_app/src/salaries/models/plank.dart';
 import 'package:salary_app/src/salaries/widgets/plank_list.dart';
+import 'package:salary_app/src/salaries/widgets/update_plank_list.dart';
 
-class AddPlankForm extends StatelessWidget {
-  const AddPlankForm({
+class UpdateAddPlankForm extends StatelessWidget {
+  const UpdateAddPlankForm({
     Key? key,
     required this.onPressed,
   }) : super(key: key);
@@ -25,7 +26,7 @@ class AddPlankForm extends StatelessWidget {
           horizontal: 16.0,
         ),
         child: FormBuilder(
-          key: SalaryCalculatorController.to.plankFormKey,
+          key: UpdateSalariesController.to.plankFormKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -158,9 +159,9 @@ class AddPlankForm extends StatelessWidget {
                 onPressed: onPressed,
                 child: const Text("Pievienot"),
               ),
-              GetX<SalaryCalculatorController>(
-                builder: (controller) => PlankList(
-                  planks: SalaryCalculatorController.to.tara.value,
+              GetX<UpdateSalariesController>(
+                builder: (controller) => UpdatePlankList(
+                  planks: UpdateSalariesController.to.tara.value,
                 ),
               ),
               const SizedBox(
@@ -169,7 +170,7 @@ class AddPlankForm extends StatelessWidget {
               Obx(
                 () => Text(
                   "Kopeja kubatura: " +
-                      SalaryCalculatorController.to.totalVolume
+                      UpdateSalariesController.to.totalVolume
                           .toStringAsFixed(3),
                 ),
               ),

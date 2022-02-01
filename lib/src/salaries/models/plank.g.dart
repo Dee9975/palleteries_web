@@ -15,6 +15,7 @@ Plank _$PlankFromJson(Map<String, dynamic> json) => Plank(
       type: $enumDecode(_$TaraTypeEnumMap, json['type']),
       kalts: json['kalts'] as bool? ?? false,
       zkv: json['zkv'] as bool? ?? false,
+      d9: json['d9'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PlankToJson(Plank instance) => <String, dynamic>{
@@ -26,6 +27,7 @@ Map<String, dynamic> _$PlankToJson(Plank instance) => <String, dynamic>{
       'type': _$TaraTypeEnumMap[instance.type],
       'zkv': instance.zkv,
       'kalts': instance.kalts,
+      'd9': instance.d9,
     };
 
 const _$TaraTypeEnumMap = {

@@ -2,23 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salary_app/src/history/screens/team_history.dart';
 import 'package:salary_app/src/salaries/controllers/salary_calculator_controller.dart';
+import 'package:salary_app/src/salaries/controllers/update_salaries_controller.dart';
 import 'package:salary_app/src/salaries/widgets/add_plank_form.dart';
 import 'package:salary_app/src/salaries/widgets/employees_list.dart';
 import 'package:salary_app/src/salaries/widgets/finished_members_list.dart';
 import 'package:salary_app/src/salaries/widgets/plank_list.dart';
 import 'package:salary_app/src/salaries/widgets/selected_employees_list.dart';
+import 'package:salary_app/src/salaries/widgets/update_add_plank_form.dart';
+import 'package:salary_app/src/salaries/widgets/update_finished_members_list.dart';
+import 'package:salary_app/src/salaries/widgets/update_selected_employees_list.dart';
 
-class SalaryCalculator extends StatelessWidget {
-  const SalaryCalculator({Key? key}) : super(key: key);
+class UpdateSalaries extends StatelessWidget {
+  const UpdateSalaries({
+    Key? key,
+    required this.team,
+  }) : super(key: key);
+
+  final team;
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SalaryCalculatorController(), permanent: true);
+    final controller = Get.put(UpdateSalariesController(team));
     return Scaffold(
       appBar: AppBar(
         actions: [
           TextButton(
-            onPressed: () => SalaryCalculatorController.to.calculateSalaries(),
+            onPressed: () => UpdateSalariesController.to.calculateSalaries(),
             child: const Text(
               "Aprekinat",
               style: TextStyle(
@@ -27,48 +36,6 @@ class SalaryCalculator extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-              ),
-              child: const Text(
-                "Palleteries",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 38.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const ListTile(
-              title: Text("Algu kalkulators"),
-            ),
-            ListTile(
-              title: const Text("Vesture"),
-              onTap: () => Get.toNamed("/history"),
-            ),
-            ListTile(
-              title: const Text("Iestatijumi"),
-              onTap: () => Get.toNamed("/settings"),
-            ),
-            ListTile(
-              title: const Text("Darbinieki"),
-              onTap: () => Get.toNamed("/employee_editor"),
-            ),
-            ListTile(
-              title: const Text("Brigades"),
-              onTap: () => Get.toNamed("/brigades"),
-            ),
-            ListTile(
-              title: const Text("Menesa algas"),
-              onTap: () => Get.toNamed("/monthly_salaries_filter"),
-            ),
-          ],
-        ),
       ),
       body: Obx(
         () => controller.settings == null || controller.brigades.isEmpty
@@ -82,9 +49,9 @@ class SalaryCalculator extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                        AddPlankForm(
+                        UpdateAddPlankForm(
                           onPressed: () =>
-                              SalaryCalculatorController.to.addPlank(),
+                              UpdateSalariesController.to.addPlank(),
                         ),
                       ],
                     ),
@@ -94,8 +61,8 @@ class SalaryCalculator extends StatelessWidget {
                         //   onPress: (e) => SalaryCalculatorController.to.addEmployee(e),
                         //   employees: SalaryCalculatorController.to.employees,
                         // ),
-                        GetX<SalaryCalculatorController>(
-                          builder: (controller) => SelectedEmployeesList(
+                        GetX<UpdateSalariesController>(
+                          builder: (controller) => UpdateSelectedEmployeesList(
                             employees: controller.teamMembers.value,
                             onPress: (e) => controller.updateMember(e),
                             onDelete: (e) => controller.removeEmployee(e),
@@ -105,7 +72,7 @@ class SalaryCalculator extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const FinishedMembersList(),
+                    const UpdateFinishedMembersList(),
                   ],
                 ),
               ),

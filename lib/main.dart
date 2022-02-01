@@ -4,6 +4,8 @@ import 'package:salary_app/firebase_options.dart';
 import 'package:salary_app/src/app.dart';
 
 Future<void> main() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const App());
 }
