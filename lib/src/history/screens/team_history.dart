@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -6,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:salary_app/src/brigades/models/brigade.dart';
 import 'package:salary_app/src/history/controllers/TeamHistoryController.dart';
 import 'package:salary_app/src/history/controllers/plank_history_controller.dart';
+import 'package:salary_app/src/history/screens/filter_history.dart';
 import 'package:salary_app/src/salaries/controllers/salary_calculator_controller.dart';
 import 'package:salary_app/src/salaries/controllers/update_salaries_controller.dart';
 import 'package:salary_app/src/salaries/models/plank.dart';
@@ -21,132 +24,96 @@ class TeamHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(TeamHistoryController());
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () => controller.showFilter = !controller.showFilter,
-            icon: Icon(Icons.filter_alt),
-          ),
-        ],
-      ),
-      body: Obx(
-        () => controller.loading
+    return GetX<TeamHistoryController>(
+      init: TeamHistoryController(),
+      builder: (TeamHistoryController controller) => Scaffold(
+        appBar: AppBar(
+          title: Text("History"),
+          actions: [
+            IconButton(
+              onPressed: () => controller.showFilter = !controller.showFilter,
+              icon: Icon(Icons.filter_alt),
+            ),
+          ],
+        ),
+        body: controller.loading
             ? Center(
                 child: CircularProgressIndicator(),
               )
             : Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "History",
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 16.0),
-                        if (controller.filteredTeams.isNotEmpty)
-                          ...controller.filteredTeams.map((el) {
-                            double totalVolume = 0.0;
-                            for (var value in el.planks) {
-                              totalVolume += value.volume;
-                            }
-                            return Card(
-                              child: Container(
-                                width: context.width,
-                                padding: EdgeInsets.all(16.0),
-                                child: ExpandablePanel(
-                                  theme: ExpandableThemeData(
-                                    tapBodyToCollapse: true,
-                                    tapBodyToExpand: true,
-                                    tapHeaderToExpand: true,
-                                  ),
-                                  header: Row(
-                                    children: [
-                                      Text(
-                                        DateFormat("dd/M/yyyy")
-                                            .format(el.createDate),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(width: 16.0),
-                                      Text(
-                                        el.brigade.name,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  collapsed: Offstage(),
-                                  expanded: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: 16.0,
-                                      ),
-                                      Text(
-                                        el.brigade.name,
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TeamTable(
-                                        team: el,
-                                      ),
-                                      SizedBox(
-                                        height: 16.0,
-                                      ),
-                                      Text(
-                                        "Tara",
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SelectableText(
-                                        "Kopeja kubatura: " +
-                                            totalVolume.toStringAsFixed(3),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8.0,
-                                      ),
-                                      PlankTable(planks: el.planks),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        if (controller.filteredTeams.isEmpty)
-                          ...controller.teams.map(
-                            (el) {
+                  Column(
+                    children: [
+                      if (controller.filteredTeams.isEmpty)
+                        Expanded(
+                          child: ListView.builder(
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: controller.teams.length,
+                            itemBuilder: (context, i) {
+                              Team el = controller.teams[i];
                               double totalVolume = 0.0;
                               for (var value in el.planks) {
                                 totalVolume += value.volume;
                               }
-                              return Card(
-                                child: Container(
-                                  width: context.width,
-                                  padding: EdgeInsets.all(16.0),
-                                  child: ExpandablePanel(
-                                    theme: ExpandableThemeData(
-                                      tapBodyToCollapse: true,
-                                      tapBodyToExpand: true,
-                                      tapHeaderToExpand: true,
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                        DateFormat("dd/M/yyyy")
+                                            .format(el.createDate),
+                                      ),
+                                      scrollable: true,
+                                      content: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 16.0,
+                                          ),
+                                          Text(
+                                            el.brigade.name,
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          TeamTable(
+                                            team: el,
+                                          ),
+                                          SizedBox(
+                                            height: 16.0,
+                                          ),
+                                          Text(
+                                            "Tara",
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SelectableText(
+                                            "Kopeja kubatura: " +
+                                                totalVolume.toStringAsFixed(3),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 8.0,
+                                          ),
+                                          PlankTable(planks: el.planks),
+                                        ],
+                                      ),
                                     ),
-                                    header: Row(
+                                  );
+                                },
+                                child: Card(
+                                  child: Container(
+                                    width: context.width,
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Row(
                                       children: [
                                         Text(
                                           DateFormat("dd/M/yyyy")
@@ -179,45 +146,111 @@ class TeamHistory extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    collapsed: Offstage(),
-                                    expanded: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      if (controller.filteredTeams.isNotEmpty)
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: controller.filteredTeams.length,
+                            itemBuilder: (context, i) {
+                              Team el = controller.filteredTeams[i];
+                              double totalVolume = 0.0;
+                              for (var value in el.planks) {
+                                totalVolume += value.volume;
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                        DateFormat("dd/M/yyyy")
+                                            .format(el.createDate),
+                                      ),
+                                      scrollable: true,
+                                      content: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 16.0,
+                                          ),
+                                          Text(
+                                            el.brigade.name,
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          TeamTable(
+                                            team: el,
+                                          ),
+                                          SizedBox(
+                                            height: 16.0,
+                                          ),
+                                          Text(
+                                            "Tara",
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SelectableText(
+                                            "Kopeja kubatura: " +
+                                                totalVolume.toStringAsFixed(3),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 8.0,
+                                          ),
+                                          PlankTable(planks: el.planks),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Card(
+                                  child: Container(
+                                    width: context.width,
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Row(
                                       children: [
-                                        SizedBox(
-                                          height: 16.0,
+                                        Text(
+                                          DateFormat("dd/M/yyyy")
+                                              .format(el.createDate),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
+                                        SizedBox(width: 16.0),
                                         Text(
                                           el.brigade.name,
                                           style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        TeamTable(
-                                          team: el,
-                                        ),
-                                        SizedBox(
-                                          height: 16.0,
-                                        ),
-                                        Text(
-                                          "Tara",
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SelectableText(
-                                          "Kopeja kubatura: " +
-                                              totalVolume.toStringAsFixed(3),
-                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 8.0,
+                                          width: 16.0,
                                         ),
-                                        PlankTable(planks: el.planks),
+                                        IconButton(
+                                          onPressed: () => Get.to(
+                                            () => UpdateSalaries(team: el),
+                                          ),
+                                          icon: Icon(Icons.edit),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        IconButton(
+                                          onPressed: () => TeamHistoryController
+                                              .to
+                                              .removeTeam(el),
+                                          icon: Icon(Icons.delete),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -225,93 +258,8 @@ class TeamHistory extends StatelessWidget {
                               );
                             },
                           ),
-                        if (controller.filteredPlanks.isNotEmpty)
-                          Card(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      "Filtretie deli",
-                                      style: TextStyle(
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        controller.exportPlanksToPdf();
-                                      },
-                                      child: Text("Export to pdf"),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 16.0,
-                                ),
-                                Text(
-                                    "Kopeja kubatura: ${controller.getFilteredVolume().toStringAsFixed(3)}"),
-                                PlankTable(
-                                  planks: controller.filteredPlanks,
-                                ),
-                              ],
-                            ),
-                          ),
-                        if (controller.filteredEmployees.isNotEmpty)
-                          Card(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      "Filtretie darbinieki",
-                                      style: TextStyle(
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        controller.exportEmployeesToExcel();
-                                      },
-                                      child: Text("Export to pdf"),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 16.0,
-                                ),
-                                Text(
-                                    "Kopeja alga: ${controller.getFilteredSalary().toStringAsFixed(2)}"),
-                                DataTable(
-                                  columns: [
-                                    DataColumn(label: Text("Vards")),
-                                    DataColumn(label: Text("Alga")),
-                                  ],
-                                  rows: controller.filteredEmployees
-                                      .map(
-                                        (e) => DataRow(
-                                          cells: [
-                                            DataCell(Text(e.name)),
-                                            DataCell(
-                                              Text(
-                                                e.salary.toStringAsFixed(2),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                   if (controller.showFilter)
                     Positioned(
@@ -504,6 +452,13 @@ class TeamHistory extends StatelessWidget {
                                     ElevatedButton(
                                       onPressed: () {
                                         controller.runFilter();
+                                        Get.to(
+                                          FilterHistory(
+                                              planks: controller.filteredPlanks,
+                                              members:
+                                                  controller.filteredEmployees,
+                                              teams: controller.filteredTeams),
+                                        );
                                       },
                                       child: Text("Filter"),
                                     ),

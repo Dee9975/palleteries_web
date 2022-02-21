@@ -83,12 +83,12 @@ class TeamHistoryController extends GetxController {
   }
 
   @override
-  Future<void> onInit() async {
+  Future<void> onReady() async {
     _loading.value = true;
     _teams.value = await FirestoreService().findTeams();
     _brigades.value = await FirestoreService().getBrigades();
     _loading.value = false;
-    super.onInit();
+    super.onReady();
   }
 
   Future<void> removeTeam(Team team) async {
@@ -358,9 +358,19 @@ class TeamHistoryController extends GetxController {
 
     if (_filterKalts.value) {
       final newList = <Plank>[];
-      for (Plank p in plankFilter) {
-        if (p.kalts) {
-          newList.add(p);
+      if (plankFilter.isNotEmpty) {
+        for (Plank p in plankFilter) {
+          if (p.kalts) {
+            newList.add(p);
+          }
+        }
+      } else {
+        for (Team t in dFilter) {
+          for (Plank p in t.planks) {
+            if (p.kalts) {
+              newList.add(p);
+            }
+          }
         }
       }
       plankFilter = newList;
@@ -368,9 +378,19 @@ class TeamHistoryController extends GetxController {
 
     if (_filterZkv.value) {
       final newList = <Plank>[];
-      for (Plank p in plankFilter) {
-        if (p.zkv) {
-          newList.add(p);
+      if (plankFilter.isNotEmpty) {
+        for (Plank p in plankFilter) {
+          if (p.zkv) {
+            newList.add(p);
+          }
+        }
+      } else {
+        for (Team t in dFilter) {
+          for (Plank p in t.planks) {
+            if (p.zkv) {
+              newList.add(p);
+            }
+          }
         }
       }
       plankFilter = newList;

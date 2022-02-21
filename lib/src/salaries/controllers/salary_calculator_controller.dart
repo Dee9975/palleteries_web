@@ -194,14 +194,6 @@ class SalaryCalculatorController extends GetxController {
     TeamMember e,
     bool val,
   ) {
-    final hasForklift = teamMembers.where((element) => element.forklift);
-    if (hasForklift.isNotEmpty) {
-      for (var element in hasForklift) {
-        element.forklift = false;
-        teamMembers[teamMembers.indexWhere((el) => el.id == element.id)] =
-            element;
-      }
-    }
     final i = teamMembers.indexWhere(
       (element) => e.id == element.id,
     );
@@ -390,9 +382,9 @@ class SalaryCalculatorController extends GetxController {
       tara.add(
         Plank(
           id: DateTime.now().millisecondsSinceEpoch,
-          width: width,
-          height: height,
-          length: length,
+          width: width / 1000,
+          height: height / 1000,
+          length: length / 1000,
           amount: amount,
           zkv: zkv,
           kalts: kalts,
@@ -462,9 +454,9 @@ class SalaryCalculatorController extends GetxController {
       }
       final Plank newPlank = Plank(
         id: id,
-        width: width,
-        height: height,
-        length: length,
+        width: width / 1000,
+        height: height / 1000,
+        length: length / 1000,
         amount: amount,
         zkv: zkv,
         kalts: kalts,
